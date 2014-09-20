@@ -31,15 +31,16 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 	function __construct() {
 
 		$this->defaults = array(
-			'title'           => '',
-			'page_id'         => '',
-			'show_image'      => 0,
-			'image_alignment' => '',
-			'image_size'      => '',
-			'show_title'      => 0,
-			'show_content'    => 0,
-			'content_limit'   => '',
-			'more_text'       => '',
+			'title'             => '',
+			'page_id'           => '',
+			'show_image'        => 0,
+			'image_alignment'   => '',
+			'image_size'        => '',
+			'show_title'        => 0,
+			'show_home_content' => 0,
+			'show_content'      => 0,
+			'content_limit'     => '',
+			'more_text'         => '',
 		);
 
 		$widget_ops = array(
@@ -136,7 +137,17 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 
 			}
 
-			if ( ! empty( $instance['show_content'] ) ) {
+			if ( is_home() && ! empty( $instance['show_home_content'] ) ) {
+				echo genesis_html5() ? '<div class="entry-content">' : '';
+
+				$postspagecontent = get_post( get_option( 'page_for_posts' ) )->post_content;
+
+				echo $postspagecontent;
+
+				echo genesis_html5() ? '</div>' : '';
+			}
+
+			elseif ( ! empty( $instance['show_content'] ) ) {
 
 				echo genesis_html5() ? '<div class="entry-content">' : '';
 
@@ -252,6 +263,11 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 		<p>
 			<input id="<?php echo $this->get_field_id( 'show_title' ); ?>" type="checkbox" name="<?php echo $this->get_field_name( 'show_title' ); ?>" value="1"<?php checked( $instance['show_title'] ); ?> />
 			<label for="<?php echo $this->get_field_id( 'show_title' ); ?>"><?php _e( 'Show Page Title', 'genesis-featured-page-static-widget' ); ?></label>
+		</p>
+
+		<p>
+			<input id="<?php echo $this->get_field_id( 'show_home_content' ); ?>" type="checkbox" name="<?php echo $this->get_field_name( 'show_home_content' ); ?>" value="1"<?php checked( $instance['show_home_content'] ); ?> />
+			<label for="<?php echo $this->get_field_id( 'show_home_content' ); ?>"><?php _e( 'Show Blog Page Content (full)', 'genesis-featured-page-static-widget' ); ?></label>
 		</p>
 
 		<p>
