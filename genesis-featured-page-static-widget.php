@@ -8,7 +8,7 @@
  * @wordpress-plugin
  * Plugin Name: Featured Page Widget for Genesis sites with Static Home Page
  * Description: Widget to Display featured page. Tweaked to allow for a site using a static home page. This replaces the built in Genesis Featured Page widget.
- * Version:     1.0.0
+ * Version:     1.0.1
  * Author:      Robin Cornett
  * Author URI:  http://robincornett.com/
  * Text Domain: genesis-featured-page-static-widget

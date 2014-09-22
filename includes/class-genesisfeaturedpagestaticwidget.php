@@ -37,10 +37,12 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 			'image_alignment'   => '',
 			'image_size'        => '',
 			'show_title'        => 0,
-			'show_home_content' => 0,
 			'show_content'      => 0,
 			'content_limit'     => '',
 			'more_text'         => '',
+			'postspage'         => get_option( 'page_for_posts' ),
+			'postspagecontent'  => get_post( get_option( 'page_for_posts' ) )->post_content,
+			'postspagelink'     => get_permalink( get_option( 'page_for_posts' ) )
 		);
 
 		$widget_ops = array(
@@ -93,14 +95,13 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 			) );
 
 			if ( is_home() ) {
-				$postspage       = get_option( 'page_for_posts' );
 				$image = genesis_get_image( array(
-					'post_id' => $postspage,
+					'post_id' => $instance['postspage'],
+					//'post_id' => $postspage,
 					'format'  => 'html',
 					'size'    => $instance['image_size'],
 					'context' => 'featured-page-widget',
 					'attr'    => genesis_parse_attr( 'entry-image-widget' ),
-					'fallback' => 'first-attached'
 				) );
 			}
 			else {
@@ -109,22 +110,21 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 					'size'    => $instance['image_size'],
 					'context' => 'featured-page-widget',
 					'attr'    => genesis_parse_attr( 'entry-image-widget' ),
-					'fallback' => 'first-attached'
 				) );
 			}
 
 			if ( is_home() && $instance['show_image'] && $image )
-				printf( '<a href="%s" title="%s" class="%s">%s</a>', get_permalink( $postspage ), the_title_attribute( array( 'echo' => 0, 'post' => $postspage ) ), esc_attr( $instance['image_alignment'] ), $image );
+				printf( '<a href="%s" title="%s" class="%s">%s</a>', $instance['postspagelink'], the_title_attribute( array( 'echo' => 0, 'post' => $instance['postspage'] ) ), esc_attr( $instance['image_alignment'] ), $image );
 			elseif ( $instance['show_image'] && $image )
-				printf( '<a href="%s" title="%s" class="%s">%s</a>', get_permalink(), the_title_attribute( 'echo=0' ), esc_attr( $instance['image_alignment'] ), $image );
+				printf( '<a href="%s" title="%s" class="%s">%s</a>', $instance['postspagelink'], the_title_attribute( 'echo=0' ), esc_attr( $instance['image_alignment'] ), $image );
 
 			if ( ! empty( $instance['show_title'] ) ) {
-				if ( is_home() ) {
-					$title = get_the_title( $postspage ) ? get_the_title( $postspage ) : __( '(no title)', 'genesis-featured-page-static-widget' );
+				if ( is_home() && ! empty( $instance['postspagecontent'] ) ) {
+					$title = get_the_title( $instance['postspage'] ) ? get_the_title( $instance['postspage'] ) : __( '(no title)', 'genesis-featured-page-static-widget' );
 					if ( genesis_html5() )
-						printf( '<header class="entry-header"><h2 class="entry-title"><a href="%s">%s</a></h2></header>', get_permalink( $postspage ), esc_html( $title ) );
+						printf( '<header class="entry-header"><h2 class="entry-title"><a href="%s">%s</a></h2></header>', $instance['postspagelink'], esc_html( $title ) );
 					else
-						printf( '<h2><a href="%s">%s</a></h2>', get_permalink( $postspage ), esc_html( $title ) );
+						printf( '<h2><a href="%s">%s</a></h2>', $instance['postspagelink'], esc_html( $title ) );
 				}
 				else {
 					$title = get_the_title() ? get_the_title() : __( '(no title)', 'genesis-featured-page-static-widget' );
@@ -137,17 +137,7 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 
 			}
 
-			if ( is_home() && ! empty( $instance['show_home_content'] ) ) {
-				echo genesis_html5() ? '<div class="entry-content">' : '';
-
-				$postspagecontent = get_post( get_option( 'page_for_posts' ) )->post_content;
-
-				echo $postspagecontent;
-
-				echo genesis_html5() ? '</div>' : '';
-			}
-
-			elseif ( ! empty( $instance['show_content'] ) ) {
+			if ( ! empty( $instance['show_content'] ) ) {
 
 				echo genesis_html5() ? '<div class="entry-content">' : '';
 
@@ -158,12 +148,22 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 					$orig_more = $more;
 					$more = 0;
 
-					the_content( $instance['more_text'] );
+					if ( is_home() && ! empty( $instance['postspagecontent'] ) ) {
+						echo $instance['postspagecontent'];
+					}
+					else {
+						the_content( $instance['more_text'] );
+					}
 
 					$more = $orig_more;
 
 				} else {
-					the_content_limit( (int) $instance['content_limit'], esc_html( $instance['more_text'] ) );
+					if ( is_home() && ! empty( $instance['postspagecontent'] ) ) {
+						$this->get_the_home_content_limit( (int) $instance['content_limit'], esc_html( $instance['more_text'] ) );
+					}
+					else {
+						the_content_limit( (int) $instance['content_limit'], esc_html( $instance['more_text'] ) );
+					}
 				}
 
 				echo genesis_html5() ? '</div>' : '';
@@ -266,11 +266,6 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 		</p>
 
 		<p>
-			<input id="<?php echo $this->get_field_id( 'show_home_content' ); ?>" type="checkbox" name="<?php echo $this->get_field_name( 'show_home_content' ); ?>" value="1"<?php checked( $instance['show_home_content'] ); ?> />
-			<label for="<?php echo $this->get_field_id( 'show_home_content' ); ?>"><?php _e( 'Show Blog Page Content (full)', 'genesis-featured-page-static-widget' ); ?></label>
-		</p>
-
-		<p>
 			<input id="<?php echo $this->get_field_id( 'show_content' ); ?>" type="checkbox" name="<?php echo $this->get_field_name( 'show_content' ); ?>" value="1"<?php checked( $instance['show_content'] ); ?> />
 			<label for="<?php echo $this->get_field_id( 'show_content' ); ?>"><?php _e( 'Show Page Content', 'genesis-featured-page-static-widget' ); ?></label>
 		</p>
@@ -285,6 +280,41 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 			<input type="text" id="<?php echo $this->get_field_id( 'more_text' ); ?>" name="<?php echo $this->get_field_name( 'more_text' ); ?>" value="<?php echo esc_attr( $instance['more_text'] ); ?>" />
 		</p>
 		<?php
+
+	}
+
+	/**
+	 * Home Content Limit function.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @package GenesisFeaturedPageStaticWidget
+	 */
+	function get_the_home_content_limit( $max_characters, $more_link_text = '(more...)', $stripteaser = false ) {
+
+		$postspage        = get_option( 'page_for_posts' );
+		$postspagecontent = get_post( $postspage )->post_content;
+		$postspagelink    = get_permalink( $postspage );
+
+		//* Strip tags and shortcodes so the content truncation count is done correctly
+		$content = strip_tags( strip_shortcodes( $postspagecontent ), apply_filters( 'get_the_content_limit_allowedtags', '<script>,<style>' ) );
+
+		//* Remove inline styles / scripts
+		$content = trim( preg_replace( '#<(s(cript|tyle)).*?</\1>#si', '', $content ) );
+
+		//* Truncate $content to $max_char
+		$content = genesis_truncate_phrase( $content, $max_characters );
+
+		//* More link?
+		if ( $more_link_text ) {
+			$link   = apply_filters( 'get_the_content_more_link', sprintf( '&#x02026; <a href="%s" class="more-link">%s</a>', $postspagelink, $more_link_text ), $more_link_text );
+			$output = sprintf( '<p>%s %s</p>', $content, $link );
+		} else {
+			$output = sprintf( '<p>%s</p>', $content );
+			$link = '';
+		}
+
+		echo apply_filters( 'get_the_home_content_limit', $output, $content, $link, $max_characters );
 
 	}
 

@@ -4,11 +4,10 @@ This plugin works within the Genesis Framework. It replaces the default Genesis 
 
 ## Description
 
-This plugin is a very slightly modified version of the Genesis Featured Page Widget. For sites using a static front page plus a posts page, this plugin will allow you to display your posts page in the widget. Due to how WordPress handles this page, I've added a new option to "Show Blog Page Content(full)". If you have selected the posts page to show in your widget, you can opt for the widget to show either the actual content of the posts/blog page, or show the full/limited content from the first post. Some caveats:
-* It's one or the other--either the content from the posts/blog page, or the full/limited content from the first post.
-* Currently there is no way to show limited content from the posts/blog page. All or nothing.
-* The More Text option is not available if you choose Show Blog Page Content (full).
-* If you choose Show Page Content with a limit and More Text, the link will go to the post, not the posts/blog page. The Page Title will link to the posts/blog page.
+This plugin is a very slightly modified version of the Genesis Featured Page Widget. For sites using a static front page plus a posts page, this plugin will allow you to display your posts page in the widget. If you select the posts/blog page to show in the Featured Page widget, the output will work this way:
+
+* if the posts page has no content of its own, the title and content of the first page shall be used for output.
+* if the posts page has content of its own, even if it doesn't show on the page itself, the title and content of the posts page shall be used for output.
 
 _For standard pages, the behavior of the Featured Page widget is unchanged._
 
@@ -42,6 +41,12 @@ Using git, browse to your `/wp-content/plugins/` directory and clone this reposi
 `git clone git@github.com:robincornett/genesis-featured-page-static-widget.git`
 
 Then go to your Plugins screen and click __Activate__.
+
+## Frequently Asked Questions
+
+### How do I show the title/content on my posts/blog page?
+
+Create a home.php file with [this code](https://gist.github.com/robincornett/cca2a45f273b35399bd2) in it and upload it to your theme directory.
 
 ## Credits
 
