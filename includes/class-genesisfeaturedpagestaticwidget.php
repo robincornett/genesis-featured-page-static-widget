@@ -97,7 +97,6 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 			if ( is_home() ) {
 				$image = genesis_get_image( array(
 					'post_id' => $instance['postspage'],
-					//'post_id' => $postspage,
 					'format'  => 'html',
 					'size'    => $instance['image_size'],
 					'context' => 'featured-page-widget',
