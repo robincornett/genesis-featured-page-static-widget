@@ -43,7 +43,10 @@ function featuredpagestatic_deactivate() {
 }
 
 function featuredpagestatic_notice() {
-	echo '<div class="error"><p><strong>(Better) Genesis Featured Page Widget</strong> works only with the Genesis Framework. It has been <strong>deactivated</strong>.</p></div>';
+	echo '<div class="error"><p><strong>(Better) Genesis Featured Page Widget</strong> works only with the Genesis Framework. It has been deactivated.</p></div>';
+	if ( isset( $_GET['activate'] ) ) {
+		unset( $_GET['activate'] );
+	}
 }
 
 require plugin_dir_path( __FILE__ ) . 'includes/class-genesisfeaturedpagestaticwidget.php';
