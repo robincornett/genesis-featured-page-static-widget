@@ -6,8 +6,8 @@
  * @license GPL-2.0+
  *
  * @wordpress-plugin
- * Plugin Name: Featured Page Widget for Genesis Sites with Static Home Page
- * Description: Widget to Display featured page. Tweaked to allow for a site using a static home page. This replaces the built in Genesis Featured Page widget.
+ * Plugin Name: (Better) Genesis Featured Page Widget
+ * Description: Widget to Display featured page, intended for sites using a static front page. This replaces the built in Genesis Featured Page widget.
  * Version:     1.0.2
  * Author:      Robin Cornett
  * Author URI:  http://robincornett.com/
@@ -43,7 +43,7 @@ function featuredpagestatic_deactivate() {
 }
 
 function featuredpagestatic_notice() {
-	echo '<div class="error"><p><strong>Featured Page Widget for Genesis Sites with Static Home Page</strong> works only with the Genesis Framework. It has been <strong>deactivated</strong>.</p></div>';
+	echo '<div class="error"><p><strong>(Better) Genesis Featured Page Widget</strong> works only with the Genesis Framework. It has been <strong>deactivated</strong>.</p></div>';
 }
 
 require plugin_dir_path( __FILE__ ) . 'includes/class-genesisfeaturedpagestaticwidget.php';
