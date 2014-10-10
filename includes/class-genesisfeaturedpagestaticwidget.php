@@ -94,7 +94,7 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 				'context' => 'entry',
 			) );
 
-			if ( is_home() ) {
+			if ( $instance['page_id'] === $instance['postspage'] ) {
 				$image = genesis_get_image( array(
 					'post_id' => $instance['postspage'],
 					'format'  => 'html',
@@ -112,13 +112,13 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 				) );
 			}
 
-			if ( is_home() && $instance['show_image'] && $image )
+			if ( ( $instance['page_id'] === $instance['postspage'] ) && $instance['show_image'] && $image )
 				printf( '<a href="%s" title="%s" class="%s">%s</a>', $instance['postspagelink'], the_title_attribute( array( 'echo' => 0, 'post' => $instance['postspage'] ) ), esc_attr( $instance['image_alignment'] ), $image );
 			elseif ( $instance['show_image'] && $image )
-				printf( '<a href="%s" title="%s" class="%s">%s</a>', $instance['postspagelink'], the_title_attribute( 'echo=0' ), esc_attr( $instance['image_alignment'] ), $image );
+				printf( '<a href="%s" title="%s" class="%s">%s</a>', get_permalink(), the_title_attribute( 'echo=0' ), esc_attr( $instance['image_alignment'] ), $image );
 
 			if ( ! empty( $instance['show_title'] ) ) {
-				if ( is_home() && ! empty( $instance['postspagecontent'] ) ) {
+				if ( ( $instance['page_id'] === $instance['postspage'] ) && ! empty( $instance['postspagecontent'] ) ) {
 					$title = get_the_title( $instance['postspage'] ) ? get_the_title( $instance['postspage'] ) : __( '(no title)', 'genesis-featured-page-static-widget' );
 					if ( genesis_html5() )
 						printf( '<header class="entry-header"><h2 class="entry-title"><a href="%s">%s</a></h2></header>', $instance['postspagelink'], esc_html( $title ) );
@@ -147,7 +147,7 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 					$orig_more = $more;
 					$more = 0;
 
-					if ( is_home() && ! empty( $instance['postspagecontent'] ) ) {
+					if ( ( $instance['page_id'] === $instance['postspage'] ) && ! empty( $instance['postspagecontent'] ) ) {
 						echo $instance['postspagecontent'];
 					}
 					else {
@@ -157,7 +157,7 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 					$more = $orig_more;
 
 				} else {
-					if ( is_home() && ! empty( $instance['postspagecontent'] ) ) {
+					if ( ( $instance['page_id'] === $instance['postspage'] ) && ! empty( $instance['postspagecontent'] ) ) {
 						$this->get_the_home_content_limit( (int) $instance['content_limit'], esc_html( $instance['more_text'] ) );
 					}
 					else {

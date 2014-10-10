@@ -54,6 +54,10 @@ Create a home.php file with [this code](https://gist.github.com/robincornett/cca
 
 ## Changelog
 
+###1.0.3
+* corrected image link if widget is not for home page
+* tightened logic to test against page_id instead of is_home()
+
 ###1.0.2
 * plugin now deactivates if Genesis isn't the active theme.
 
