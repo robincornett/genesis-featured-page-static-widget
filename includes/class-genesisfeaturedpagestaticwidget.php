@@ -41,7 +41,6 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 			'content_limit'     => '',
 			'more_text'         => '',
 			'postspage'         => get_option( 'page_for_posts' ),
-			'postspagecontent'  => get_post( get_option( 'page_for_posts' ) )->post_content,
 			'postspagelink'     => get_permalink( get_option( 'page_for_posts' ) )
 		);
 
@@ -117,8 +116,9 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 			elseif ( $instance['show_image'] && $image )
 				printf( '<a href="%s" title="%s" class="%s">%s</a>', get_permalink(), the_title_attribute( 'echo=0' ), esc_attr( $instance['image_alignment'] ), $image );
 
+			$postspagecontent = get_post( get_option( 'page_for_posts' ) )->post_content;
 			if ( ! empty( $instance['show_title'] ) ) {
-				if ( ( $instance['page_id'] === $instance['postspage'] ) && ! empty( $instance['postspagecontent'] ) ) {
+				if ( ( $instance['page_id'] === $instance['postspage'] ) && ! empty( $postspagecontent ) ) {
 					$title = get_the_title( $instance['postspage'] ) ? get_the_title( $instance['postspage'] ) : __( '(no title)', 'genesis-featured-page-static-widget' );
 					if ( genesis_html5() )
 						printf( '<header class="entry-header"><h2 class="entry-title"><a href="%s">%s</a></h2></header>', $instance['postspagelink'], esc_html( $title ) );
@@ -147,8 +147,8 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 					$orig_more = $more;
 					$more = 0;
 
-					if ( ( $instance['page_id'] === $instance['postspage'] ) && ! empty( $instance['postspagecontent'] ) ) {
-						echo $instance['postspagecontent'];
+					if ( ( $instance['page_id'] === $instance['postspage'] ) && ! empty( $postspagecontent ) ) {
+						echo $postspagecontent;
 					}
 					else {
 						the_content( $instance['more_text'] );
@@ -157,7 +157,7 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 					$more = $orig_more;
 
 				} else {
-					if ( ( $instance['page_id'] === $instance['postspage'] ) && ! empty( $instance['postspagecontent'] ) ) {
+					if ( ( $instance['page_id'] === $instance['postspage'] ) && ! empty( $postspagecontent ) ) {
 						$this->get_the_home_content_limit( (int) $instance['content_limit'], esc_html( $instance['more_text'] ) );
 					}
 					else {
