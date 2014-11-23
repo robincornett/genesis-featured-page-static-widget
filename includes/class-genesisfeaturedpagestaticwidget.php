@@ -80,8 +80,9 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 		echo $args['before_widget'];
 
 		//* Set up the author bio
-		if ( ! empty( $instance['title'] ) )
+		if ( ! empty( $instance['title'] ) ) {
 			echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base ) . $args['after_title'];
+		}
 
 		$wp_query = new WP_Query( array( 'page_id' => $instance['page_id'], 'posts_per_page' => 1, 'post__not_in' => get_option( 'sticky_posts' ) ) );
 
@@ -93,6 +94,12 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 				'context' => 'entry',
 			) );
 
+			$image = genesis_get_image( array(
+				'format'  => 'html',
+				'size'    => $instance['image_size'],
+				'context' => 'featured-page-widget',
+				'attr'    => genesis_parse_attr( 'entry-image-widget' ),
+			) );
 			if ( $instance['page_id'] === $instance['postspage'] ) {
 				$image = genesis_get_image( array(
 					'post_id' => $instance['postspage'],
@@ -102,38 +109,43 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 					'attr'    => genesis_parse_attr( 'entry-image-widget' ),
 				) );
 			}
-			else {
-				$image = genesis_get_image( array(
-					'format'  => 'html',
-					'size'    => $instance['image_size'],
-					'context' => 'featured-page-widget',
-					'attr'    => genesis_parse_attr( 'entry-image-widget' ),
-				) );
-			}
 
-			if ( ( $instance['page_id'] === $instance['postspage'] ) && $instance['show_image'] && $image )
-				printf( '<a href="%s" title="%s" class="%s">%s</a>', $instance['postspagelink'], the_title_attribute( array( 'echo' => 0, 'post' => $instance['postspage'] ) ), esc_attr( $instance['image_alignment'] ), $image );
-			elseif ( $instance['show_image'] && $image )
-				printf( '<a href="%s" title="%s" class="%s">%s</a>', get_permalink(), the_title_attribute( 'echo=0' ), esc_attr( $instance['image_alignment'] ), $image );
+			if ( $instance['show_image'] && $image ) {
+				$image_link  = get_permalink();
+				$image_title = the_title_attribute( 'echo=0' );
+				if ( $instance['page_id'] === $instance['postspage'] ) {
+					$image_link  = $instance['postspagelink'];
+					$image_title = the_title_attribute( array( 'echo' => 0, 'post' => $instance['postspage'] ) );
+				}
+
+				printf( '<a href="%s" title="%s" class="%s">%s</a>',
+					$image_link,
+					$image_title,
+					esc_attr( $instance['image_alignment'] ),
+					$image
+				);
+			}
 
 			$postspagecontent = get_post( get_option( 'page_for_posts' ) )->post_content;
 			if ( ! empty( $instance['show_title'] ) ) {
+				$title     = get_the_title() ? get_the_title() : __( '(no title)', 'genesis-featured-page-static-widget' );
+				$post_link = get_permalink();
 				if ( ( $instance['page_id'] === $instance['postspage'] ) && ! empty( $postspagecontent ) ) {
-					$title = get_the_title( $instance['postspage'] ) ? get_the_title( $instance['postspage'] ) : __( '(no title)', 'genesis-featured-page-static-widget' );
-					if ( genesis_html5() )
-						printf( '<header class="entry-header"><h2 class="entry-title"><a href="%s">%s</a></h2></header>', $instance['postspagelink'], esc_html( $title ) );
-					else
-						printf( '<h2><a href="%s">%s</a></h2>', $instance['postspagelink'], esc_html( $title ) );
+					$title     = get_the_title( $instance['postspage'] ) ? get_the_title( $instance['postspage'] ) : __( '(no title)', 'genesis-featured-page-static-widget' );
+					$post_link = $instance['postspagelink'];
+				}
+				if ( genesis_html5() ) {
+					printf( '<header class="entry-header"><h2 class="entry-title"><a href="%s">%s</a></h2></header>',
+						esc_url( $post_link ),
+						esc_html( $title )
+					);
 				}
 				else {
-					$title = get_the_title() ? get_the_title() : __( '(no title)', 'genesis-featured-page-static-widget' );
-
-					if ( genesis_html5() )
-						printf( '<header class="entry-header"><h2 class="entry-title"><a href="%s">%s</a></h2></header>', get_permalink(), esc_html( $title ) );
-					else
-						printf( '<h2><a href="%s">%s</a></h2>', get_permalink(), esc_html( $title ) );
+					printf( '<h2><a href="%s">%s</a></h2>',
+						esc_url( $post_link ),
+						esc_html( $title )
+					);
 				}
-
 			}
 
 			if ( ! empty( $instance['show_content'] ) ) {
