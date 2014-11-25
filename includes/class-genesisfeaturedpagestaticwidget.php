@@ -94,21 +94,18 @@ class Genesis_Featured_Page_Static_Widget extends WP_Widget {
 				'context' => 'entry',
 			) );
 
+			$post_id = null; // default for genesis_get_image
+			if ( $instance['page_id'] === $instance['postspage'] ) {
+				$post_id = $instance['postspage']; // override for blog page
+			}
+
 			$image = genesis_get_image( array(
+				'post_id' => $post_id,
 				'format'  => 'html',
 				'size'    => $instance['image_size'],
 				'context' => 'featured-page-widget',
 				'attr'    => genesis_parse_attr( 'entry-image-widget' ),
 			) );
-			if ( $instance['page_id'] === $instance['postspage'] ) {
-				$image = genesis_get_image( array(
-					'post_id' => $instance['postspage'],
-					'format'  => 'html',
-					'size'    => $instance['image_size'],
-					'context' => 'featured-page-widget',
-					'attr'    => genesis_parse_attr( 'entry-image-widget' ),
-				) );
-			}
 
 			if ( $instance['show_image'] && $image ) {
 				$image_link  = get_permalink();
